@@ -1,0 +1,181 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Candy Match-3</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #222;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 10px;
+    }
+
+    #score {
+      margin-bottom: 20px;
+      font-size: 1.2rem;
+    }
+
+    #board {
+      display: grid;
+      grid-template-columns: repeat(8, 50px);
+      grid-template-rows: repeat(8, 50px);
+      gap: 2px;
+    }
+
+    .candy {
+      width: 50px;
+      height: 50px;
+      user-select: none;
+    }
+
+    .empty {
+      background-color: transparent;
+    }
+  </style>
+</head>
+<body>
+  <h1>Candy Match-3</h1>
+  <div id="score">Score: 0</div>
+  <div id="board"></div>
+
+  <script>
+    const board = document.getElementById("board");
+    const scoreDisplay = document.getElementById("score");
+    const width = 8;
+    const candyImages = [
+      "red.webp",
+      "yellow.webp",
+      "green.webp",
+      "blue.webp",
+      "purple.webp",
+      "orange.png"
+    ];
+    let squares = [];
+    let score = 0;
+
+    // Create Board
+    function createBoard() {
+      for (let i = 0; i < width * width; i++) {
+        const img = document.createElement("img");
+        img.setAttribute("draggable", true);
+        img.setAttribute("id", i);
+        img.setAttribute("class", "candy");
+        let randomCandy = candyImages[Math.floor(Math.random() * candyImages.length)];
+        img.setAttribute("src", randomCandy);
+        board.appendChild(img);
+        squares.push(img);
+      }
+    }
+
+    // Drag logic
+    let candyBeingDragged;
+    let candyBeingReplaced;
+    let squareIdBeingDragged;
+    let squareIdBeingReplaced;
+
+    squares.forEach(img => {
+      img.addEventListener("dragstart", dragStart);
+      img.addEventListener("dragover", e => e.preventDefault());
+      img.addEventListener("drop", dragDrop);
+      img.addEventListener("dragend", dragEnd);
+    });
+
+    function dragStart() {
+      candyBeingDragged = this.getAttribute("src");
+      squareIdBeingDragged = parseInt(this.id);
+    }
+
+    function dragDrop() {
+      candyBeingReplaced = this.getAttribute("src");
+      squareIdBeingReplaced = parseInt(this.id);
+      squares[squareIdBeingDragged].setAttribute("src", candyBeingReplaced);
+      squares[squareIdBeingReplaced].setAttribute("src", candyBeingDragged);
+    }
+
+    function dragEnd() {
+      let validMoves = [
+        squareIdBeingDragged - 1,
+        squareIdBeingDragged + 1,
+        squareIdBeingDragged - width,
+        squareIdBeingDragged + width,
+      ];
+      let validMove = validMoves.includes(squareIdBeingReplaced);
+
+      if (squareIdBeingReplaced && validMove) {
+        checkMatches();
+      } else {
+        squares[squareIdBeingDragged].setAttribute("src", candyBeingDragged);
+        squares[squareIdBeingReplaced].setAttribute("src", candyBeingReplaced);
+      }
+    }
+
+    function checkMatches() {
+      // Row of 3
+      for (let i = 0; i < 64; i++) {
+        let rowOfThree = [i, i + 1, i + 2];
+        let notValid = [6, 7, 14, 15, 22, 23, 30, 31, 38, 39, 46, 47, 54, 55];
+        if (notValid.includes(i)) continue;
+        let decidedSrc = squares[i].getAttribute("src");
+        if (
+          rowOfThree.every(index => squares[index].getAttribute("src") === decidedSrc)
+        ) {
+          rowOfThree.forEach(index => {
+            squares[index].setAttribute("src", "");
+            squares[index].classList.add("empty");
+          });
+          score += 3;
+        }
+      }
+
+      // Column of 3
+      for (let i = 0; i < 48; i++) {
+        let columnOfThree = [i, i + width, i + width * 2];
+        let decidedSrc = squares[i].getAttribute("src");
+        if (
+          columnOfThree.every(index => squares[index].getAttribute("src") === decidedSrc)
+        ) {
+          columnOfThree.forEach(index => {
+            squares[index].setAttribute("src", "");
+            squares[index].classList.add("empty");
+          });
+          score += 3;
+        }
+      }
+
+      scoreDisplay.textContent = "Score: " + score;
+    }
+
+    function moveDown() {
+      for (let i = 0; i < 56; i++) {
+        if (squares[i + width].getAttribute("src") === "") {
+          squares[i + width].setAttribute("src", squares[i].getAttribute("src"));
+          squares[i].setAttribute("src", "");
+        }
+      }
+
+      for (let i = 0; i < 8; i++) {
+        if (squares[i].getAttribute("src") === "") {
+          let randomCandy = candyImages[Math.floor(Math.random() * candyImages.length)];
+          squares[i].setAttribute("src", randomCandy);
+        }
+      }
+    }
+
+    window.setInterval(() => {
+      moveDown();
+      checkMatches();
+    }, 150);
+
+    createBoard();
+  </script>
+</body>
+</html> -->
